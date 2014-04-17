@@ -1,16 +1,37 @@
 <html><head><title>JSIntro.docx</title><meta content="text/html; charset=UTF-8" http-equiv="content-type">
 	<script>
+
+/*
+
+var secretNumber = 41;
+var rounds = [43, 30, 39, 41];
+for(var round = 0; round < rounds.length; round = round + 1) {
+ var guess = rounds[round];
+ if (guess > secretNumber) {
+  say("Too high!");
+ } else if (guess < secretNumber) {
+  say("Too low!");
+ } else {
+  say("Correct! The secret number is " + secretNumber + "!");
+ }
+}
+
+*/
+
 function say() {
 	// nothing by deafult
 }	
 
 function _say(message, outputId) {
 	var el = document.getElementById(outputId);
-	el.innerHTML = message;
+	el.innerHTML += "<br />" + message;
 }
 
 function run(codeId) {
 	var editor = document.getElementById(codeId);
+	var output = document.getElementById(codeId + "Output");
+	output.innerHTML = "";
+
 	say = function(message) {
 		_say(message, codeId + 'Output');
 	}
