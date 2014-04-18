@@ -3,8 +3,37 @@
 <head>
     <title>JSIntro.docx</title>
     <meta content="text/html; charset=UTF-8" http-equiv="content-type">
+    <script src="bower_components/jquery/dist/jquery.min.js"></script>
     <script>
-        /*
+$(function() {
+    $('#userName').on('change', function() {
+        var greeting = $('#userGreeting');
+        if (this.value) {
+            greeting.html('Hello there, <strong>' + this.value + '</strong>!');
+            greeting.fadeIn();
+            updateNameText('userName', this.value);
+        } else {
+            greeting.hide();
+        }
+    });
+
+    $('#friendName').on('change', function() {
+        var greeting = $('#friendGreeting');
+        if (this.value) {
+            greeting.html('And, hello there, <strong>' + this.value + '</strong>!');
+            greeting.fadeIn();
+            updateNameText('friendName', this.value);
+        } else {
+            greeting.hide();
+        }
+    });    
+})
+
+function updateNameText(fieldName, nameValue) {
+    $('.' + fieldName).text(nameValue);
+}
+
+/*
 
 var secretNumber = 41;
 var rounds = [43, 30, 39, 41];
@@ -49,6 +78,10 @@ for(var round = 0; round < rounds.length; round = round + 1) {
         }
     </script>
     <style>
+        #greeting {
+            display: none;
+        }
+
         .output {
             border: 1px solid gray;
             background: lightgray;
@@ -2895,17 +2928,34 @@ for(var round = 0; round < rounds.length; round = round + 1) {
     <br />
     <p class="c6"><span>This hands-on tutorial takes you on a quest with several missions to help you learn the JavaScript programming language step-by-step. After you&rsquo;ve gone through the tutorial, you&rsquo;ll create your first game, a fun guessing game that you can play against your family and friends. </span>
     </p>
+
     <h2 class="c22 c6"><a name="h.4nr6gzmclyyq"></a><span>What can I build with JavaScript?</span></h2>
     <p class="c6"><span>That&rsquo;s a great question, and the answer these days is: &nbsp;pretty much anything you want! </span>
     </p>
     <p class="c6">
         <br /><span>One thing you can build is games. Games are &nbsp;great fun! So, let&rsquo;s get started right away. </span>
     </p>
-    <h2 class="c22 c6"><a name="h.2ah7lfawauul"></a><span>Play the game before you make the game with code</span></h2>
-    <p class="c6"><span>Before we code a game, I want you to play a game without the computer. After doing that, we will then use the JavaScript programming language to create a computerized version of the same game. It is probably a game you have played before. It is called the <b>guessing game</b>. </span>
+    <h2 class="c22 c6"><a name="h.2ah7lfawauul"></a><span>Our game needs two players. So, find a friend!</span></h2>
+    <p class="c6"><span>I want you to play the game without worrying about how we're going to code it first. The guessing game is easy to play, and it's best to play this game with a friend, because otherwise, its a little difficult to keep a secret from yourself!</span>
     </p>
-    <h3 class="c22 c6"><a name="h.44kgmgba1yep"></a><span>Find a friend and type up your game steps</span></h3>
-    <p class="c6"><span>You need another person to play with you. Before playing, I want you to take a moment to think about the game, and then type out the steps for playing the game into the textbox below. </span>
+
+    <h3>Player names</h3>
+
+    <p>Once you've found your friend, let me know your first names by typing them into the text boxes below.</p>
+
+    <br />
+
+    <p><em>If you're reading this alone, then just make up the name of a friend who you think is hard to beat at games.</em></p>
+
+    <br />
+
+    <p>
+        <input id='userName' type='text' placeholder="Player 1 first name" />&nbsp;and&nbsp;<input id='friendName' type='text' placeholder="Player 2 first name" />
+        <div><span id='userGreeting'></span>&nbsp;<span id='friendGreeting'></span></div>        
+    </p>
+
+    <h3 class="c22 c6"><a name="h.44kgmgba1yep"></a><span>Tell me what the game steps are</span></h3>
+    <p class="c6"><span>The basic rules of the game are simple: Player 1 thinks of a number, then Player 2 tries to guess that number. But, before playing, I want you and your friend to take a moment to about the <strong>exact steps you use to play the game</strong>. When you've figured that out, type out the steps you will use into the textbox below.</span>
     </p>
     <br />
     <p class="c6"><span>You don&rsquo;t have to be perfect at this, but it&rsquo;s important to just give this a try. A big part of coding is thinking about what you want to make the computer do for you before you try to code it! If you have any trouble doing this step, don&rsquo;t worry about it. You can skip ahead to see what steps we&rsquo;ll use for our computerized version!</span>
@@ -2951,19 +3001,19 @@ for(var round = 0; round < rounds.length; round = round + 1) {
     <p class="c6"><span>Pretty simple, right? If you haven&rsquo;t already done so, play the game a few times with your friend, taking turns being Player 1 and Player 2.</span>
     </p>
     <h4 class="c22 c6"><a name="h.z3gnpux6c5n0"></a><span>Sample play results</span></h4>
-    <p class="c6"><span>I asked two friends, Jason and Jenny, to play the game with those rules a few times. Here&rsquo;s what happened the first time they played:</span>
+    <p class="c6"><span>I asked two friends, <span class='userName'>Jason</span> and <span class='friendName'>Jenny</span>, to play the game with those rules a few times. Here&rsquo;s what happened the first time they played:</span>
     </p>
     <p class="c6"><span class="c9">Setup: </span>
     </p>
     <ol class="c10 lst-kix_c6n1po5a5t43-0 start" start="1">
-        <li class="c15 c6"><span>Player 1 is Jenny and Player 2 is Jason</span>
+        <li class="c15 c6"><span>Player 1 is <span class='friendName'>Jenny</span> and Player 2 is <span class='userName'>Jason</span></span>
         </li>
-        <li class="c15 c6"><span>Jenny thought of the number 41 and remembered it</span>
+        <li class="c15 c6"><span><span class='friendName'>Jenny</span> thought of the number 41 and remembered it</span>
         </li>
     </ol>
     <p class="c6"><span class="c9">Game Play:</span>
     </p>
-    <p class="c6"><span>It Jason four rounds to guess the right answer!</span>
+    <p class="c6"><span>It <span class='userName'>Jason</span> four rounds to guess the right answer!</span>
     </p>
     <a href="#" name="f4b35d15c67bc6c4aa471ac5722d6a0350c8df92"></a>
     <a href="#" name="0"></a>
@@ -2974,13 +3024,13 @@ for(var round = 0; round < rounds.length; round = round + 1) {
                     <p class="c17 c6"><span class="c3 c9 c21">Round 1:</span>
                     </p>
                     <ol class="c10 lst-kix_je7lfygmk19u-0 start" start="1">
-                        <li class="c0"><span class="c8 c3">Jenny asked Jason, &ldquo;What&rsquo;s your guess?&rdquo;</span>
+                        <li class="c0"><span class="c8 c3"><span class='friendName'>Jenny</span> asked <span class='userName'>Jason</span>, &ldquo;What&rsquo;s your guess?&rdquo;</span>
                         </li>
-                        <li class="c0"><span class="c8 c3">Jason told Jenny, &ldquo;43&rdquo;</span>
+                        <li class="c0"><span class="c8 c3"><span class='userName'>Jason</span> told <span class='friendName'>Jenny</span>, &ldquo;43&rdquo;</span>
                         </li>
-                        <li class="c0"><span class="c8 c3">Jenny listened to Jason and remembered his guess of 43</span>
+                        <li class="c0"><span class="c8 c3"><span class='friendName'>Jenny</span> listened to <span class='userName'>Jason</span> and remembered his guess of 43</span>
                         </li>
-                        <li class="c0"><span class="c8 c3">Jenny thought of the three things she could say:</span>
+                        <li class="c0"><span class="c8 c3"><span class='friendName'>Jenny</span> thought of the three things she could say:</span>
                         </li>
                     </ol>
                     <ol class="c10 lst-kix_je7lfygmk19u-1 start" start="1">
@@ -2991,7 +3041,7 @@ for(var round = 0; round < rounds.length; round = round + 1) {
                         <li class="c12 c6"><span class="c8 c3">Or, &ldquo;Correct! The secret number is 41!&rdquo; if 43 is equal to 41</span>
                         </li>
                     </ol>
-                    <p class="c17 c6"><span class="c32 c3 c9">Result: Jenny said, &ldquo;Too high!&rdquo;</span>
+                    <p class="c17 c6"><span class="c32 c3 c9">Result: <span class='friendName'>Jenny</span> said, &ldquo;Too high!&rdquo;</span>
                     </p>
                 </td>
             </tr>
@@ -3000,15 +3050,15 @@ for(var round = 0; round < rounds.length; round = round + 1) {
                     <p class="c17 c6"><span class="c21 c3 c9">Round 2:</span>
                     </p>
                     <ol class="c10 lst-kix_ep039qnokg1c-0 start" start="1">
-                        <li class="c0"><span class="c8 c3">Jenny asked Jason, &ldquo;What&rsquo;s your guess?&rdquo;</span>
+                        <li class="c0"><span class="c8 c3"><span class='friendName'>Jenny</span> asked <span class='userName'>Jason</span>, &ldquo;What&rsquo;s your guess?&rdquo;</span>
                         </li>
-                        <li class="c0"><span class="c8 c3">Jason told Jenny, &ldquo;30&rdquo;</span>
+                        <li class="c0"><span class="c8 c3"><span class='userName'>Jason</span> told <span class='friendName'>Jenny</span>, &ldquo;30&rdquo;</span>
                         </li>
-                        <li class="c0"><span class="c8 c3">Jenny listened to Jason and remembered his guess of 30</span>
+                        <li class="c0"><span class="c8 c3"><span class='friendName'>Jenny</span> listened to <span class='userName'>Jason</span> and remembered his guess of 30</span>
                         </li>
                     </ol>
                     <ol class="c10 lst-kix_je7lfygmk19u-0" start="5">
-                        <li class="c0"><span class="c8 c3">Jenny thought of the three things she could say:</span>
+                        <li class="c0"><span class="c8 c3"><span class='friendName'>Jenny</span> thought of the three things she could say:</span>
                         </li>
                     </ol>
                     <ol class="c10 lst-kix_je7lfygmk19u-1" start="4">
@@ -3019,7 +3069,7 @@ for(var round = 0; round < rounds.length; round = round + 1) {
                         <li class="c6 c12"><span class="c8 c3">Or, &ldquo;Correct! The secret number is 41!&rdquo; if 30 is equal to 41</span>
                         </li>
                     </ol>
-                    <p class="c17 c6"><span class="c32 c3 c9">Result: Jenny said, &ldquo;Too low!&rdquo;</span>
+                    <p class="c17 c6"><span class="c32 c3 c9">Result: <span class='friendName'>Jenny</span> said, &ldquo;Too low!&rdquo;</span>
                     </p>
                 </td>
             </tr>
@@ -3028,13 +3078,13 @@ for(var round = 0; round < rounds.length; round = round + 1) {
                     <p class="c17 c6"><span class="c21 c3 c9">Round 3:</span>
                     </p>
                     <ol class="c10 lst-kix_5o1kk2s71ef0-0 start" start="1">
-                        <li class="c0"><span class="c8 c3">Jenny asked Jason, &ldquo;What&rsquo;s your guess?&rdquo;</span>
+                        <li class="c0"><span class="c8 c3"><span class='friendName'>Jenny</span> asked <span class='userName'><span class='userName'>Jason</span></span>, &ldquo;What&rsquo;s your guess?&rdquo;</span>
                         </li>
-                        <li class="c0"><span class="c8 c3">Jason told Jenny, &ldquo;39&rdquo;</span>
+                        <li class="c0"><span class="c8 c3"><span class='userName'>Jason</span> told <span class='friendName'>Jenny</span>, &ldquo;39&rdquo;</span>
                         </li>
-                        <li class="c0"><span class="c8 c3">Jenny listened to Jason and remembered his guess of 39</span>
+                        <li class="c0"><span class="c8 c3"><span class='friendName'>Jenny</span> listened to <span class='userName'>Jason</span> and remembered his guess of 39</span>
                         </li>
-                        <li class="c0"><span class="c8 c3">Jenny thought of the three things she could say:</span>
+                        <li class="c0"><span class="c8 c3"><span class='friendName'>Jenny</span> thought of the three things she could say:</span>
                         </li>
                     </ol>
                     <ol class="c10 lst-kix_je7lfygmk19u-1" start="7">
@@ -3045,7 +3095,7 @@ for(var round = 0; round < rounds.length; round = round + 1) {
                         <li class="c12 c6"><span class="c8 c3">Or, &ldquo;Correct! The secret number is 41!&rdquo; if 39 is equal to 41</span>
                         </li>
                     </ol>
-                    <p class="c17 c6"><span class="c32 c3 c9">Result: Jenny said, &ldquo;Too low!&rdquo;</span>
+                    <p class="c17 c6"><span class="c32 c3 c9">Result: <span class='friendName'>Jenny</span> said, &ldquo;Too low!&rdquo;</span>
                     </p>
                 </td>
             </tr>
@@ -3054,13 +3104,13 @@ for(var round = 0; round < rounds.length; round = round + 1) {
                     <p class="c17 c6"><span class="c21 c3 c9">Round 4:</span>
                     </p>
                     <ol class="c10 lst-kix_ffliiwb1vrs4-0 start" start="1">
-                        <li class="c0"><span class="c8 c3">Jenny asked Jason, &ldquo;What&rsquo;s your guess?&rdquo;</span>
+                        <li class="c0"><span class="c8 c3"><span class='friendName'>Jenny</span> asked <span class='userName'>Jason</span>, &ldquo;What&rsquo;s your guess?&rdquo;</span>
                         </li>
-                        <li class="c0"><span class="c8 c3">Jason told Jenny, &ldquo;41&rdquo;</span>
+                        <li class="c0"><span class="c8 c3"><span class='userName'>Jason</span> told <span class='friendName'>Jenny</span>, &ldquo;41&rdquo;</span>
                         </li>
-                        <li class="c0"><span class="c8 c3">Jenny listened to Jason and remembered his guess of 41</span>
+                        <li class="c0"><span class="c8 c3"><span class='friendName'>Jenny</span> listened to <span class='userName'>Jason</span> and remembered his guess of 41</span>
                         </li>
-                        <li class="c0"><span class="c3 c8">Jenny thought of the three things she could say:</span>
+                        <li class="c0"><span class="c3 c8"><span class='friendName'>Jenny</span> thought of the three things she could say:</span>
                         </li>
                     </ol>
                     <ol class="c10 lst-kix_ffliiwb1vrs4-1 start" start="1">
@@ -3071,7 +3121,7 @@ for(var round = 0; round < rounds.length; round = round + 1) {
                         <li class="c12 c6"><span class="c8 c3">Or, &ldquo;Correct! The secret number is 41!&rdquo; if 41 is equal to 41</span>
                         </li>
                     </ol>
-                    <p class="c17 c6"><span class="c32 c3 c9">Result: Jenny said, &ldquo;Correct! The secret number is 41!&rdquo;</span>
+                    <p class="c17 c6"><span class="c32 c3 c9">Result: <span class='friendName'>Jenny</span> said, &ldquo;Correct! The secret number is 41!&rdquo;</span>
                     </p>
                 </td>
             </tr>
@@ -3079,11 +3129,11 @@ for(var round = 0; round < rounds.length; round = round + 1) {
     </table>
     <p class="c29 c6"><span class="c9"></span>
     </p>
-    <h2 class="c22 c6"><a name="h.2usbqi7q627k"></a><span>JavaScript versions of Jenny and Jason&rsquo;s game rounds</span></h2>
+    <h2 class="c22 c6"><a name="h.2usbqi7q627k"></a><span>JavaScript versions of <span class='friendName'>Jenny</span> and <span class='userName'>Jason</span>&rsquo;s game rounds</span></h2>
     <p class="c6"><span>The best way to start to understand code is to read some! Don&rsquo;t worry, I&rsquo;m going to explain it all very soon, but just take a look at these examples first. I bet you&rsquo;ll understand them quickly without me explaining much.</span>
     </p>
     <h3 class="c22 c6"><a name="h.lcu7rakiwn73"></a><span>Responding to too high guesses</span></h3>
-    <p class="c6"><span>So, if we were to write a JavaScript program that simulated Jenny and Jason&rsquo;s game rounds, here&rsquo;s enough code to handle round 1 above, the case in which Jason says 43, a number that&rsquo;s too high:</span>
+    <p class="c6"><span>So, if we were to write a JavaScript program that simulated <span class='friendName'>Jenny</span> and <span class='userName'>Jason</span>&rsquo;s game rounds, here&rsquo;s enough code to handle round 1 above, the case in which <span class='userName'>Jason</span> says 43, a number that&rsquo;s too high:</span>
     </p>
     <p class="c13 c6"><span class="c11">1. var secretNumber </span><span class="c11 c9">=</span><span class="c11">&nbsp;41;</span>
     </p>
@@ -3110,7 +3160,7 @@ for(var round = 0; round < rounds.length; round = round + 1) {
     <p class="c13 c6"><span>The words </span><span class="c9">secretNumber </span><span>and </span><span class="c9">guess </span><span>are both what we call </span><span class="c9">variables</span><span>&nbsp;in a program. We&rsquo;re going to explain this in great detail soon, but for now just know that you declare variables and assign values to them that you want the program to remember for you. This is a lot like in our English game steps that say Player 1 has &nbsp;to remember the secret number that Player 2 tells them in order to decide what to say in response.</span>
     </p>
     <h3 class="c13 c22 c6"><a name="h.i6qq2nowtk6n"></a><span>Responding to too low guesses</span></h3>
-    <p class="c13 c6"><span>As the word &ldquo;variable&rdquo; implies the value of a variable can take on different, varying values! And, we know that in round 2, Jason guessed 30. Let&rsquo;s modify our program by adding lines 5 - 7 to be able to respond correctly when the variable </span>
+    <p class="c13 c6"><span>As the word &ldquo;variable&rdquo; implies the value of a variable can take on different, varying values! And, we know that in round 2, <span class='userName'>Jason</span> guessed 30. Let&rsquo;s modify our program by adding lines 5 - 7 to be able to respond correctly when the variable </span>
         <span
         class="c9">guess</span><span>takes on the value of 30:</span>
     </p>
@@ -3203,7 +3253,7 @@ for(var round = 0; round < rounds.length; round = round + 1) {
 
 
     <h3 class="c13 c22 c6 c39"><a name="h.oo9zanopdmu8"></a><span>Playing allllll the rounds in with one click</span></h3>
-    <p class="c13 c6"><span>You just created a program that you had to modify each time you wanted to simulate each round that Jason needed to get to the right answer. But, what if we want to simulate all four of his rounds very quickly?</span></p>
+    <p class="c13 c6"><span>You just created a program that you had to modify each time you wanted to simulate each round that <span class='userName'>Jason</span> needed to get to the right answer. But, what if we want to simulate all four of his rounds very quickly?</span></p>
     <br />
     <p>We can do this easily in JavaScript by introducing two more important programming concepts. I know, I just said you were finished with your first game, but I think you'll like this! The two new concepts are <b>arrays</b> (lists of similar things you want a program to use or remember) and <b>looping</b>, or doing the same thing to every item in an array.</p>
     <br />
@@ -3245,7 +3295,7 @@ for(var round = 0; round < rounds.length; round = round + 1) {
     <h3 class="c13 c22 c6 c39"><a name="h.oo9zanopdmu8"></a><span>What about playing the game with more than one guessing player?</span></h3>
     <p class="c13 c6"><span>You just added two new, and very important, programming to your toolbelt! Let's do just one more big concept before moving ahead.</span></p>
     <br />
-    <p>In real life, a guessing game often involves one person, like Jenny, and multiple guessers, not just one like Jason. How can we simulate that in a program with JavaScript?</p>
+    <p>In real life, a guessing game often involves one person, like <span class='friendName'>Jenny</span>, and multiple guessers, not just one like <span class='userName'>Jason</span>. How can we simulate that in a program with JavaScript?</p>
     <br />
 
     <p>We do that by introducing one of the most powerful and important concepts of all: <b>objects</b>. An object lets you group together related information and even code. While you can stuff an object into a single variable, the object itself can contain several, or dozens of its own <b>properties</b>. You can think of a property as a kind of sub-variable. It's a variable that belongs to the object and travels along with the object wherever you send the object in your program. Let's just try it.</span></p>
