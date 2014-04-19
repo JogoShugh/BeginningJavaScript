@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 
 <head>
@@ -26,8 +27,11 @@ function resetGuesses() {
     var guesses = getGuesses();
     if (guesses.length > 0) {
         var areYouSure = confirm("Are you sure?");
-        if (areYouSure)
+        if (areYouSure) {
             $('.guess').remove();
+            $('#resetGuesses').hide();            
+            $('#startGuessing').fadeIn();            
+        }
     }
 }
 
@@ -40,6 +44,8 @@ function getInt(val) {
 function startGuessing() {
     if (getGuesses().length < 1) {
         addGuess();        
+        $('#startGuessing').hide();
+        $('#resetGuesses').fadeIn();
     }
 }
 
@@ -47,14 +53,17 @@ function addGuess() {
     var guesses = $('#guesses');
     var round = guesses.find('.guess').length;
     round++;
-    var newGuess = $("<div class='guess'><input type='number' placeholder='Guess #" + round + "' />&nbsp;<span class='correctGuess'><button onclick='correctGuess(this.parentNode.parentNode)'>Correct!</button>&nbsp;</span><button onclick='removeGuess(this.parentNode)'>Remove</button></div>");
+    var newGuess = $("<div class='guess'><input type='number' min='1' max='50' style='width:7em' placeholder='Guess #" + round + "' />&nbsp;<span class='correctGuess'><button onclick='correctGuess(this.parentNode.parentNode)'>Correct!</button>&nbsp;</span><button onclick='removeGuess(this.parentNode)'>Remove</button></div>");
     newGuess.find('input').on('keydown', function(evt) {
         if (evt.which == 13) {
             var val = getInt(this.value);
             if (val !== null) {
                 addGuess();
             } else {
-                alert('Please specify a number from 1 to 50 only!');
+                var inputElem = document.createElement('input');
+                if (!('required' in inputElem)) {
+                    alert('Please specify a number from 1 to 50 only!');
+                }                
             }
         }
     });
@@ -136,6 +145,10 @@ for(var round = 0; round < rounds.length; round = round + 1) {
 
 
 $(function() {
+    $("#guesses").submit(function(e){
+        e.preventDefault();
+    });
+
     $('#player1').on('change', function() {
         var greeting = $('#player1Greeting');
         if (this.value) {
@@ -167,8 +180,8 @@ $(function() {
     });
 
     if (autoPop) {
-        $('#player1').val("Josh");
-        $('#player2').val("Danae");
+        $('#player1').val("Jenny");
+        $('#player2').val("Jason");
         $('#player1').trigger('change');
         $('#player2').trigger('change');        
         $('#player1radio').attr('checked', 'checked');
@@ -246,6 +259,10 @@ for(var round = 0; round < rounds.length; round = round + 1) {
 
         .guessRow:nth-child(even) {
             background-color: lightgray;
+        }
+
+        #resetGuesses {
+            display: none;
         }
     </style>
 
@@ -3146,11 +3163,11 @@ for(var round = 0; round < rounds.length; round = round + 1) {
         the <strong>Correct!</strong> button next to the textbox.</li>
         </ul>
     <p>
-        <button onclick='startGuessing()'>Start guessing</button>&nbsp;<button onclick='resetGuesses()'>Reset guesses</button>
+        <button onclick='startGuessing()' id='startGuessing'>Start guessing</button>&nbsp;<button onclick='resetGuesses()' id='resetGuesses'>Reset guesses</button>
     </p>
 
-    <p id='guesses'>
-    </p>
+    <form id='guesses'>
+    </form>
 
     <p><button onclick='renderRoundGuesses()'>Show guess details</button></p>
 
