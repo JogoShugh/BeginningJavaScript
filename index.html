@@ -6,6 +6,8 @@
     <script src="bower_components/jquery/dist/jquery.min.js"></script>
     <script>
 
+var autoPop = false;
+
 function getGuessResponse(guess, secretNumber) {
     if (guess > secretNumber) {
         return "Too high!";
@@ -16,22 +18,58 @@ function getGuessResponse(guess, secretNumber) {
     }
 }
 
-var rounds = [];
+function getGuesses() {
+    return $('.guess');
+}
 
-function resetGame() {
-    rounds.length = 0;
+function resetGuesses() {
+    var guesses = getGuesses();
+    if (guesses.length > 0) {
+        var areYouSure = confirm("Are you sure?");
+        if (areYouSure)
+            $('.guess').remove();
+    }
+}
+
+function getInt(val) {
+    val = parseInt(val);
+    if (!isNaN(val) && val >= 1 && val <= 50) return val;
+    return null;
+}
+
+function startGuessing() {
+    if (getGuesses().length < 1) {
+        addGuess();        
+    }
 }
 
 function addGuess() {
     var guesses = $('#guesses');
-    var newGuess = $("<div class='guess'><input type='number' placeholder='Guess value' />&nbsp;<span onclick='removeGuess(this.parentNode)'>remove</span></div>");
+    var round = guesses.find('.guess').length;
+    round++;
+    var newGuess = $("<div class='guess'><input type='number' placeholder='Guess #" + round + "' />&nbsp;<span class='correctGuess'><button onclick='correctGuess(this.parentNode.parentNode)'>Correct!</button>&nbsp;</span><button onclick='removeGuess(this.parentNode)'>Remove</button></div>");
     newGuess.find('input').on('keydown', function(evt) {
         if (evt.which == 13) {
-            addGuess();
+            var val = getInt(this.value);
+            if (val !== null) {
+                addGuess();
+            } else {
+                alert('Please specify a number from 1 to 50 only!');
+            }
         }
     });
     guesses.append(newGuess);
     newGuess.find('input').focus();
+}
+
+function correctGuess(guess) {
+    var val = getInt($(guess).find("input[type='number']").val());
+    if (val !== null) {
+        $('.guess').each(function() {
+            this.correct = false;
+        });
+        guess.correct = true;
+    }
 }
 
 function removeGuess(guess) {
@@ -46,16 +84,17 @@ function renderRoundGuesses() {
     var secretNumber = 0;
     var count = 1;
     $('.guess').each(function() {
-        var val = $(this).find("input[type='number']").val();
-        if (val !== null && val !== undefined && val !== '') {
-            secretNumber = parseInt(val);
+        var val = getInt($(this).find("input[type='number']").val());
+        if (val !== null && this.correct) {
+            secretNumber = val;
+            console.log(secretNumber);
         }
     });
 
     $('.guess').each(function() {
         var response = '';
-        var val = parseInt($(this).find("input[type='number']").val());
-        if (!isNaN(val)) {        
+        var val = getInt($(this).find("input[type='number']").val());
+        if (val !== null) {        
             var response = getGuessResponse(val, secretNumber);
             var guess = "<tr class='guessRow'><td>";
             guess += "<h4>Round " + count + ":</h4>";
@@ -125,7 +164,16 @@ $(function() {
         asker = $('#' + opponents[1]).val();
         $('#playerGuesserDisplay').fadeIn();
         $('#playerGuesserName').text(guesser);
-    })
+    });
+
+    if (autoPop) {
+        $('#player1').val("Josh");
+        $('#player2').val("Danae");
+        $('#player1').trigger('change');
+        $('#player2').trigger('change');        
+        $('#player1radio').attr('checked', 'checked');
+        $('#player1radio').trigger('change');
+    }    
 })
 
 function updateNameText(fieldName, nameValue) {
@@ -202,7 +250,7 @@ for(var round = 0; round < rounds.length; round = round + 1) {
     </style>
 
     <style type="text/css">
-        @import url('https://themes.googleusercontent.com/fonts/css?kit=na2xy4REgy2vjVAZtpZNc_yDN7cgeRfA_woaXUgMUYU');
+        /* @import url('https://themes.googleusercontent.com/fonts/css?kit=na2xy4REgy2vjVAZtpZNc_yDN7cgeRfA_woaXUgMUYU'); */
         .lst-kix_ynhfz5ayso3d-5>li:before {
             content: "\0025aa  "
         }
@@ -3081,28 +3129,30 @@ for(var round = 0; round < rounds.length; round = round + 1) {
     <h3 class="c22 c6">Play the game and record your results here!</h3>
     <br />
 
-    <p class="c6"><span>Go ahead and play the game! <strong>Make sure you record your results after each guess below.</span>
+    <p class="c6"><span>OK, so get to play the game. First, tell me who is going to pick the secret number:
+        <input type='radio' class='playerSelector' id='player1radio' name='playerSelector' value='player2|player1'>&nbsp;<span class='player1'>Jenny</span>&nbsp;or&nbsp;
+        <input type='radio' name='playerSelector' id='player2radio' class='playerSelector' value='player1|player2'>&nbsp;<span class='player2'>Jason</span>?
+    </p>
+    <br />
+    <p id='playerGuesserDisplay'>
+            OK, great, that means that <strong><span id='playerGuesserName'>Jason</span></strong> is the guesser!
     </p>
 
+    <p>Now, when you're ready to start:
+        <ul>
+            <li>Click the <strong>Start guessing</strong> button below.</li>
+            <li>For each guess made by <span class='guesser'>Jason</span>, type it into the textbox that appears, then press enter to generate a new textbox for the next guess.</li>
+            <li>When <span class='guesser'>Jason</span> gets the number correct, click
+        the <strong>Correct!</strong> button next to the textbox.</li>
+        </ul>
     <p>
-        <button onclick='addGuess()'>Start guessing!</button>
+        <button onclick='startGuessing()'>Start guessing</button>&nbsp;<button onclick='resetGuesses()'>Reset guesses</button>
     </p>
 
     <p id='guesses'>
     </p>
 
-    <p>
-        <button onclick='renderRoundGuesses()'>Render round guesses</button>
-    </p>
-
-    <p>
-        Who thought of the secret number? <input type='radio' class='playerSelector' name='playerSelector' value='player2|player1'>&nbsp;<span class='player1'>Jenny</span>&nbsp;or&nbsp;
-        <input type='radio' name='playerSelector' class='playerSelector' value='player1|player2'>&nbsp;<span class='player2'>Jason</span>
-    </p>
-    <p id='playerGuesserDisplay'>
-        OK, great, that means that <strong><span id='playerGuesserName'>Jason</span></strong> was the guesser!
-    </p>
-
+    <p><button onclick='renderRoundGuesses()'>Show guess details</button></p>
 
     <h3 class="c22 c6"><a name="h.957bs0r5p187"></a><span>Steps we&rsquo;ll use during this tutorial</span></h3>
     <p class="c6"><span>The steps we will use are these:</span>
