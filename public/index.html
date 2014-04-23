@@ -102,6 +102,35 @@ function removeGuess(guess) {
     $(guess).remove();
 }
 
+function recordGuesses() {
+    var guesses = {
+        asker: asker,
+        guesser: guesser,
+        secretNumber: 0,
+        guesses: []
+    };
+    $('.guess').each(function() {
+        var val = getInt($(this).find("input[type='number']").val());
+        if (val !== null && this.correct) {
+            guesses.secretNumber = val;
+        }
+    });
+
+    $('.guess').each(function() {
+        var response = '';
+        var val = getInt($(this).find("input[type='number']").val());
+        if (val !== null) {        
+            var response = getGuessResponse(val, guesses.secretNumber);
+            guesses.guesses.push({
+                val: val,
+                response: response
+            });
+        }
+    });
+
+    $.post('/guesses', guesses);
+}
+
 function renderRoundGuesses() {
     var results = $('#results');
     var resultsBody = $('#resultsBody');
@@ -3190,6 +3219,8 @@ for(var round = 0; round < rounds.length; round = round + 1) {
 
     <form id='guesses'>
     </form>
+
+    <p><button onclick='recordGuesses()'>Record guesses</button></p>
 
     <p><button onclick='renderRoundGuesses()'>Show guess details</button></p>
 

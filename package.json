@@ -1,0 +1,8 @@
+{
+  "name": "SimpleChat",
+  "dependencies": {
+    "express": "~3.3.4",
+    "underscore" : "*",
+    "request" : "*"
+  }
+}
