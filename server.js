@@ -1,7 +1,18 @@
 var express = require('express'),
     app 	  = express(),
     request = require('request'),
-    _       = require('underscore');
+    htmlparser = require('htmlparser'),
+    select = require('soupselect').select,
+    _ = require('underscore');
+
+function shuffle(o){
+    for(var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
+    return o;
+}
+
+function randomItem(array) {
+  return array[Math.floor(Math.random() * array.length)];
+}
 
 // Keep an array of guesses
 var guessesDb = [];
@@ -89,6 +100,103 @@ app.get('/stats', function(req, res) {
   res.send(guessCounts);
 });
 
+var handler = new htmlparser.DefaultHandler(function (error, dom) {
+    if (error) {
+      console.log("Error:");
+      console.log(error);
+    }
+    else {
+      console.log('Done:');
+    }
+});
+var parser = new htmlparser.Parser(handler);
+
+app.get('/profiles', function(req, res) {
+  var profileImages = [];
+  var completedRequests = 0;
+  request.get('http://api.plnkr.co/tags/cdps,cdprofile?files=yes', function (error, response, body) {
+    if (!error && response.statusCode == 200) {
+      body = JSON.parse(body);
+      body.forEach(function(plunk) {
+        if (plunk.fork_of == 'I26fUu') {
+          var content = plunk.files["index.html"].content;
+          parser.parseComplete(content);
+          select(handler.dom, 'img').forEach(function(el) {
+            profileImages.push(el.attribs.src);
+          });
+        }
+      });
+    }
+    res.json(profileImages);
+  });
+});
+// I26fUu
+app.get('/players', function(req, res) {
+  request.get('http://api.plnkr.co/tags/cdps,cdprofile', function (error, response, body) {
+    if (!error && response.statusCode == 200) {
+      body = JSON.parse(body);
+      console.log(body);
+      res.json("OK");
+      /*
+      var profiles = _.map(body, function(item) {
+        return item.url;
+      });
+      */
+    }
+  });
+});
+
+var allPlunks = [];
+var currentPlunk = '';
+
+app.get('/resetGame', function(req, res) {
+  request.get('http://api.plnkr.co/tags/cdps,cdprofile?files=yes', function (error, response, body) {
+    if (!error && response.statusCode == 200) {
+      allPlunks.length = 0;
+      body = JSON.parse(body);
+      body.forEach(function(plunk) {
+        if (plunk.fork_of == 'I26fUu') {
+          allPlunks.push(plunk);
+        }
+      });
+      allPlunks = shuffle(allPlunks);
+      console.log('Total items:');
+      console.log(allPlunks.length);
+    }
+    res.json(currentPlunk);
+  });
+});
+
+app.get('/profileCurrent', function(req, res) {
+  var plunk = allPlunks[0];
+  var content = plunk.files["index.html"].content;
+  var profileImages = [];
+  parser.parseComplete(content);
+  select(handler.dom, 'img').forEach(function(el) {
+    profileImages.push(el.attribs.src);
+  });
+  res.send(profileImages);
+});
+    
+app.get('/playersRemaining', function(req, res) {
+  var players = _.pluck(allPlunks, 'user');
+  players = _.map(players, function(item) {
+    return item.login;
+  });
+  res.json(players);
+});
+
+app.post('/guess', function(req, res) {
+  var guess = req.body.guess;
+  console.log(guess);
+  var currentUser = allPlunks[0].user.login;
+  if (guess == currentUser) {
+    allPlunks.shift();
+    res.send("Correct!");    
+  } else {
+    res.send("Nope!");
+  }
+});
 
 var port = process.env.PORT || 80;
 
