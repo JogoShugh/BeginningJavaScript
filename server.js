@@ -17,9 +17,6 @@ function randomItem(array) {
 // Keep an array of guesses
 var guessesDb = [];
 
-// Serve index.html as static text
-app.use(express.static(__dirname + '/public'));
-
 // Convenience for allowing CORS on routes - GET and POST
 app.use(function(req, res, next) {
   var oneof;
@@ -46,6 +43,8 @@ app.use(function(req, res, next) {
   }
 });
 
+// Serve index.html as static text
+app.use(express.static(__dirname + '/public'));
 
 app.use(express.urlencoded());
 
@@ -111,41 +110,6 @@ var handler = new htmlparser.DefaultHandler(function (error, dom) {
 });
 var parser = new htmlparser.Parser(handler);
 
-app.get('/profiles', function(req, res) {
-  var profileImages = [];
-  var completedRequests = 0;
-  request.get('http://api.plnkr.co/tags/cdps,cdprofile?files=yes', function (error, response, body) {
-    if (!error && response.statusCode == 200) {
-      body = JSON.parse(body);
-      body.forEach(function(plunk) {
-        if (plunk.fork_of == 'I26fUu') {
-          var content = plunk.files["index.html"].content;
-          parser.parseComplete(content);
-          select(handler.dom, 'img').forEach(function(el) {
-            profileImages.push(el.attribs.src);
-          });
-        }
-      });
-    }
-    res.json(profileImages);
-  });
-});
-// I26fUu
-app.get('/players', function(req, res) {
-  request.get('http://api.plnkr.co/tags/cdps,cdprofile', function (error, response, body) {
-    if (!error && response.statusCode == 200) {
-      body = JSON.parse(body);
-      console.log(body);
-      res.json("OK");
-      /*
-      var profiles = _.map(body, function(item) {
-        return item.url;
-      });
-      */
-    }
-  });
-});
-
 var allPlunks = [];
 var currentPlunk = '';
 
@@ -167,7 +131,7 @@ app.get('/resetGame', function(req, res) {
   });
 });
 
-app.get('/profileCurrent', function(req, res) {
+app.get('/images', function(req, res) {
   var plunk = allPlunks[0];
   var content = plunk.files["index.html"].content;
   var profileImages = [];
