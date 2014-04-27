@@ -3,6 +3,7 @@ var express = require('express'),
     request = require('request'),
     htmlparser = require('htmlparser'),
     select = require('soupselect').select,
+    uuid = require('node-uuid'),
     _ = require('underscore');
 
 function shuffle(o){
@@ -110,52 +111,91 @@ var handler = new htmlparser.DefaultHandler(function (error, dom) {
 });
 var parser = new htmlparser.Parser(handler);
 
-var allPlunks = [];
-var currentPlunk = '';
+var games = {};
 
-app.get('/resetGame', function(req, res) {
-  request.get('http://api.plnkr.co/tags/cdps,cdprofile?files=yes', function (error, response, body) {
+function gameAdd(game) {
+  games[game.id] = game;
+}
+
+function gameCreate(name) {
+  var id = uuid.v1();
+  return {
+    id: id,
+    name: name,
+    started: false,
+    completed: false
+  }
+}
+
+function gamesOpen() {
+  return _.where(games, {completed:false});
+}
+
+function gameById(id) {
+  return _.findWhere(games, {id:id});
+}
+
+
+app.get('/gamesOpen', function(req, res) {
+  res.json(gamesOpen());
+});
+
+app.post('/game', function(req, res) {
+  var name = req.body.name;
+  var game = gameCreate(name);
+  request.get('http://api.plnkr.co/tags/cdps,cdprofile?files=yes', 
+    function (error, response, body) {
     if (!error && response.statusCode == 200) {
-      allPlunks.length = 0;
+      var plunks = [];
       body = JSON.parse(body);
       body.forEach(function(plunk) {
         if (plunk.fork_of == 'I26fUu') {
-          allPlunks.push(plunk);
+          plunks.push(plunk);
         }
       });
-      allPlunks = shuffle(allPlunks);
-      console.log('Total items:');
-      console.log(allPlunks.length);
+      plunks = shuffle(plunks);
+      game.plunks = plunks;
     }
-    res.json(currentPlunk);
+    gameAdd(game);
+    res.json(game);
   });
 });
 
-app.get('/images', function(req, res) {
-  var plunk = allPlunks[0];
+app.get('/images/:id', function(req, res) {  
+  var game = gameById(req.params.id);
+  console.log(game);
+  var plunk = game.plunks[0];
   var content = plunk.files["index.html"].content;
   var profileImages = [];
   parser.parseComplete(content);
   select(handler.dom, 'img').forEach(function(el) {
     profileImages.push(el.attribs.src);
   });
-  res.send(profileImages);
+  res.json(profileImages);
 });
     
-app.get('/playersRemaining', function(req, res) {
-  var players = _.pluck(allPlunks, 'user');
+app.get('/playersRemaining/:id', function(req, res) {
+  var game = gameById(req.params.id);
+  var players = _.pluck(game.plunks, 'user');
   players = _.map(players, function(item) {
     return item.login;
   });
   res.json(players);
 });
 
-app.post('/guess', function(req, res) {
+app.post('/guess/:id', function(req, res) {
+  console.log(req.params);
+  var game = gameById(req.params.id);
+  console.log("The game:");
+  console.log(game);
   var guess = req.body.guess;
-  console.log(guess);
-  var currentUser = allPlunks[0].user.login;
+  var plunk = game.plunks[0];
+  console.log('Plunk:');
+  console.log(plunk);
+  var currentUser = plunk.user.login;
   if (guess == currentUser) {
-    allPlunks.shift();
+    // If won, advance it:
+    game.plunks.shift();
     res.send("Correct!");    
   } else {
     res.send("Nope!");
